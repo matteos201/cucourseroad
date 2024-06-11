@@ -33,7 +33,7 @@ def semester_and_year():
             valid_input2 = True
         else:
             print("Failed to identify year choice: Please enter 1, 2, or 3, 4, 5, or 6.")
-    return (semester, year)
+    return (sem_choices[semester], year_choices[year])
 
 def course_selection(courses_catalog):
     my_courses = []
@@ -51,10 +51,39 @@ def course_selection(courses_catalog):
 
 
 if __name__ == "__main__":
-    sem_and_year = semester_and_year()
-    course_catalog = webscrape_courses(input("Please choose your department: "))
-    my_courses = course_selection(course_catalog)
 
-    
+    print("\n\nWELCOME TO COURSEROAD FOR CU!\n----------------------------\n")
+    while True:
 
-    print(my_courses)
+        choices = input("\nWhat would you like to do:\n1. Pick semester and year\n2. Quit program\nEnter here: ")
+        match choices:
+            case "1":
+                sem_and_year = semester_and_year()
+                print(f'Your semester and year: {sem_and_year}')
+                pass
+            case "2":
+                break
+            case "quit":
+                break
+            case _:
+                print("Sorry. Your input does not match our choices. Please enter 1 or 2.")
+        course_catalog = webscrape_courses(input("Please choose your department: "))
+        my_courses = course_selection(course_catalog)
+            
+
+        
+
+        print(f"Courses picked for {sem_and_year[0]}, {sem_and_year[1]}:")
+        for course in my_courses:
+            print(course)
+
+        save_to_file = input("Save to file? (Yes or No): ")
+        match save_to_file:
+            case 'Yes':
+                f = open(f"{sem_and_year[0]}{sem_and_year[1]}.txt", "w")
+                for course in my_courses:
+                    f.write(f"Courses picked for {sem_and_year[0]}, {sem_and_year[1]}:")
+                    f.write(f"\n{course}")
+                f.close()
+            case 'No':
+                continue
