@@ -1,5 +1,6 @@
 from bs4 import BeautifulSoup
 import requests
+import json
 
 def webscrape_depts():
     html_text = requests.get('https://catalog.colorado.edu/courses-a-z/').text
@@ -127,13 +128,7 @@ def main():
         if confirm == 'y':
             break    
     return my_courses
-    
-    
-    
-    
-    
-    
-
+   
 
 if __name__ == "__main__":
     print("\n\nWELCOME TO COURSEROAD FOR CU!\n----------------------------\n")
@@ -142,6 +137,7 @@ if __name__ == "__main__":
     print("'plan': Start planning semester")
     print("'show': Displays course list by semester and year")
     print("'save': Saves course list to txt file")
+    print("'import': Imports past course list")
 
     courses_dict = {}
     sem_and_year = ()
@@ -162,7 +158,15 @@ if __name__ == "__main__":
                         save_to_file = input("Save to file? (y/n)\n> ").lower()
                         match save_to_file:
                             case 'y':
-                                file_name = "myCourseList.txt"
+                                while True:
+                                    name_your_file = input("Name your file:\n> ")
+                                    try: 
+                                        file_name = f"{name_your_file}.txt"
+                                        f = open(file_name, "w")
+                                        f.close()
+                                        break
+                                    except:
+                                        print("Bad name: Make sure there are no spaces or special characters.")
                                 f = open(file_name, "w")
                                 f.write(str(courses_dict))
                                 f.close()
@@ -174,6 +178,16 @@ if __name__ == "__main__":
                             case _:
                                 print("Please enter y for yes or n for no.")
                                 continue
+                case "import":
+                    while True:
+                        name_your_file = input("Name your file:\n> ")
+                        file_name = f"{name_your_file}.txt"
+                        try: 
+                            f = open(file_name, "r")
+                            courses_dict = eval(f.read())
+                            break
+                        except:
+                            print("Cannot find file...")
                 case _:
                     print("Sorry. Your input does not match our choices.")
         if sem_and_year not in courses_dict:
