@@ -1,8 +1,10 @@
 from bs4 import BeautifulSoup
 import requests
-import json
 
 def webscrape_depts():
+    '''
+    Scrapes course catalog department titles from CU Boulder website. Retuns a set of four letter department codes.
+    '''
     html_text = requests.get('https://catalog.colorado.edu/courses-a-z/').text
     soup = BeautifulSoup(html_text, 'lxml')
     depts_set = set()
@@ -81,6 +83,7 @@ def course_selection(courses_catalog):
                     else:
                         print("Cannot identify course number")
                 break
+            # del is still in the works
             case 'del':
                 while True:
                     del_input = input("Enter the id of the course you'd like to delete. (enter 'done' to finish removing courses):\n> ")
