@@ -60,24 +60,27 @@ def course_selection(courses_catalog):
         if user_input == 'done':
             break
         elif user_input in courses_catalog:
-            print(f"Added {courses_catalog[user_input]}")
-            my_courses.append(courses_catalog[user_input])
+            while True:
+                confirm = input("Confirm to add this course? (y/n):\n> ").lower()
+                if confirm == 'y':
+                    print(f"Added {courses_catalog[user_input]}")
+                    my_courses.append(courses_catalog[user_input])
+                    break
+                elif confirm == 'n':
+                    break
+                else:
+                    print("Please enter n for no or y for yes")
+
         else:
             print("Cannot identify course number")
     return my_courses
 
-
-if __name__ == "__main__":
-
-    print("\n\nWELCOME TO COURSEROAD FOR CU!\n----------------------------\n")
-    print("--------Controls Guide--------")
-    print("'quit': Quits program")
-    print("'plan semester': Start planning semester")
+def main():
     while True:
         
         choices = input("\nWhat would you like to do?\n> ")
         match choices:
-            case "plan semester":
+            case "plan":
                 sem_and_year = semester_and_year()
                 print(f'Your semester and year: {sem_and_year}')
                 break
@@ -88,32 +91,55 @@ if __name__ == "__main__":
                 continue
     avail_depts = webscrape_depts()
     while True:
+        confirm = ''
         check_department = input("Please choose your department:\n> ")
         if check_department == "quit":
             exit()
         elif check_department in avail_depts:
-            course_catalog = webscrape_courses(check_department)
-            my_courses = course_selection(course_catalog)
-            break
+            while True:
+                confirm = input("Are you sure you want this department? (y/n) \n> ").lower()
+                if confirm == 'y':
+                    course_catalog = webscrape_courses(check_department)
+                    my_courses = course_selection(course_catalog)
+                    break
+                elif confirm == 'n':
+                    break
+                else:
+                    print("Please enter y for yes or n for no.")
         else:
             print("This is not a valid department code!")
-            
+        if confirm == 'y':
+            break
 
     print(f"Courses picked for {sem_and_year[0]}, {sem_and_year[1]}:")
     for course in my_courses:
         print(course)
+    files = []
+    while True:
+        save_to_file = input("Save to file? (y/n)\n> ").lower()
+        match save_to_file:
+            case 'y':
+                file_name = f"{sem_and_year[0]}{sem_and_year[1]}.txt"
+                f = open(file_name, "w")
+                files.append(file_name)
+                f.write(f"Courses picked for {sem_and_year[0]}, {sem_and_year[1]}:")
+                for course in my_courses:
+                    f.write(f"\n{course}")
+                f.close()
+                break
+            case 'n':
+                break
+            case 'quit':
+                exit()
+            case _:
+                print("Please enter y for yes or n for no.")
+                continue
 
-    save_to_file = input("Save to file? (Yes or No)\n> ").lower()
-    match save_to_file:
-        case 'yes':
-            f = open(f"{sem_and_year[0]}{sem_and_year[1]}.txt", "w")
-            f.write(f"Courses picked for {sem_and_year[0]}, {sem_and_year[1]}:")
-            for course in my_courses:
-                f.write(f"\n{course}")
-            f.close()
-        case 'no':
-            pass
-        case 'quit':
-            exit()
+    main()
 
-    
+if __name__ == "__main__":
+    print("\n\nWELCOME TO COURSEROAD FOR CU!\n----------------------------\n")
+    print("--------Controls Guide--------")
+    print("'quit': Quits program")
+    print("'plan': Start planning semester")
+    main()
